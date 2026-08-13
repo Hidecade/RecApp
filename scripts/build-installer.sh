@@ -10,6 +10,7 @@ INSTALLER_IDENTITY=${INSTALLER_IDENTITY:-Developer ID Installer: Hideki Konishi 
 APP="$ROOT/dist/build-$VERSION/RecApp.app"
 PKG="$ROOT/dist/RecApp-$VERSION-macOS.pkg"
 STAGING_ROOT="$ROOT/dist/.installer-root"
+VERIFY_ROOT="$ROOT/dist/.installer-verify"
 
 APP_PATH="$APP" "$ROOT/scripts/build-app.sh"
 
@@ -21,7 +22,8 @@ codesign --verify --deep --strict --verbose=2 "$APP"
 
 rm -rf "$STAGING_ROOT"
 mkdir -p "$STAGING_ROOT/Applications"
-ditto "$APP" "$STAGING_ROOT/Applications/RecApp.app"
+cp -R "$APP" "$STAGING_ROOT/Applications/RecApp.app"
+codesign --verify --deep --strict --verbose=2 "$STAGING_ROOT/Applications/RecApp.app"
 
 rm -f "$PKG"
 pkgbuild \
@@ -33,8 +35,12 @@ pkgbuild \
     --sign "$INSTALLER_IDENTITY" \
     "$PKG"
 
+rm -rf "$VERIFY_ROOT"
+pkgutil --expand-full "$PKG" "$VERIFY_ROOT"
+codesign --verify --deep --strict --verbose=2 "$VERIFY_ROOT/Payload/Applications/RecApp.app"
+
 # Prevent Installer from discovering the signed build as an existing app.
-rm -rf "$STAGING_ROOT" "$APP"
+rm -rf "$STAGING_ROOT" "$VERIFY_ROOT" "$APP"
 
 xcrun notarytool submit "$PKG" \
     --keychain-profile "$NOTARY_PROFILE" \
