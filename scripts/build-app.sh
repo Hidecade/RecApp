@@ -2,7 +2,7 @@
 set -eu
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
-APP="$ROOT/dist/RecApp.app"
+APP=${APP_PATH:-$ROOT/dist/RecApp.app}
 
 cd "$ROOT"
 swift build -c release

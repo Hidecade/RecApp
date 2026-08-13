@@ -35,7 +35,7 @@ Developer ID証明書とnotarytoolのKeychainプロファイルがある環境�
 NOTARY_PROFILE=Aureline-notary ./scripts/build-installer.sh
 ```
 
-`dist/RecApp-1.0-macOS.pkg` が生成され、Appleへの公証、staple、Gatekeeper検証まで自動実行されます。
+`dist/RecApp-1.0.1-macOS.pkg` が生成され、Appleへの公証、staple、Gatekeeper検証まで自動実行されます。
 
 ## 動作環境
 

@@ -2,23 +2,32 @@
 set -eu
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
-VERSION=${VERSION:-1.0}
+VERSION=${VERSION:-1.0.1}
 NOTARY_PROFILE=${NOTARY_PROFILE:-Aureline-notary}
 APP_IDENTITY=${APP_IDENTITY:-Developer ID Application: Hideki Konishi (8H7SC722UJ)}
 INSTALLER_IDENTITY=${INSTALLER_IDENTITY:-Developer ID Installer: Hideki Konishi (8H7SC722UJ)}
-APP="$ROOT/dist/RecApp.app"
+APP="$ROOT/dist/build-$VERSION/RecApp.app"
 PKG="$ROOT/dist/RecApp-$VERSION-macOS.pkg"
+STAGING_ROOT="$ROOT/dist/.installer-root"
 
-"$ROOT/scripts/build-app.sh"
+APP_PATH="$APP" "$ROOT/scripts/build-app.sh"
 
+/usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" "$APP/Contents/Info.plist"
+/usr/libexec/PlistBuddy -c "Set :CFBundleVersion 2" "$APP/Contents/Info.plist"
 codesign --force --deep --options runtime --timestamp \
     --sign "$APP_IDENTITY" "$APP"
 codesign --verify --deep --strict --verbose=2 "$APP"
 
+rm -rf "$STAGING_ROOT"
+mkdir -p "$STAGING_ROOT/Applications"
+ditto "$APP" "$STAGING_ROOT/Applications/RecApp.app"
+
 rm -f "$PKG"
-productbuild \
-    --component "$APP" /Applications \
-    --identifier com.hidecade.recapp.installer \
+pkgbuild \
+    --root "$STAGING_ROOT" \
+    --install-location / \
+    --component-plist "$ROOT/Resources/InstallerComponents.plist" \
+    --identifier com.hidecade.recapp \
     --version "$VERSION" \
     --sign "$INSTALLER_IDENTITY" \
     "$PKG"
@@ -29,5 +38,6 @@ xcrun notarytool submit "$PKG" \
 xcrun stapler staple "$PKG"
 xcrun stapler validate "$PKG"
 spctl --assess --type install --verbose=2 "$PKG"
+pkgutil --check-signature "$PKG"
 
 echo "$PKG"
