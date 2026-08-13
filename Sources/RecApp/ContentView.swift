@@ -134,7 +134,7 @@ struct ContentView: View {
             Button {
                 Task { await model.toggleRecording() }
             } label: {
-                Label(model.isRecording ? "停止" : "録画を開始",
+                Label(model.isRecording ? (model.recordingMode == .audioOnly ? "録音を停止" : "録画を停止") : model.actionTitle,
                       systemImage: model.isRecording ? "stop.fill" : "record.circle")
                     .frame(minWidth: 104)
             }

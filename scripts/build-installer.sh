@@ -2,8 +2,8 @@
 set -eu
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
-VERSION=${VERSION:-1.0.2}
-BUILD_NUMBER=${BUILD_NUMBER:-3}
+VERSION=${VERSION:-1.0.3}
+BUILD_NUMBER=${BUILD_NUMBER:-6}
 NOTARY_PROFILE=${NOTARY_PROFILE:-Aureline-notary}
 APP_IDENTITY=${APP_IDENTITY:-Developer ID Application: Hideki Konishi (8H7SC722UJ)}
 INSTALLER_IDENTITY=${INSTALLER_IDENTITY:-Developer ID Installer: Hideki Konishi (8H7SC722UJ)}

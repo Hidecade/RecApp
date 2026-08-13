@@ -16,7 +16,7 @@ struct RecApp: App {
         .commands {
             CommandGroup(replacing: .newItem) { }
             CommandMenu("録画") {
-                Button(model.isRecording ? "録画を停止" : "録画を開始") {
+                Button(model.actionTitle) {
                     Task { await model.toggleRecording() }
                 }
                 .keyboardShortcut("r", modifiers: [.command, .shift])
@@ -43,7 +43,7 @@ private struct MenuBarContent: View {
 
         Divider()
 
-        Button(model.isRecording ? "録画を停止" : "録画を開始") {
+        Button(model.actionTitle) {
             Task { await model.toggleRecording() }
         }
         .keyboardShortcut("r", modifiers: [.command, .shift])

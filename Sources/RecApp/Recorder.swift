@@ -55,6 +55,15 @@ final class RecorderViewModel: ObservableObject {
         return isRecording ? "\(mode) \(elapsedText)" : mode
     }
 
+    var actionTitle: String {
+        switch (recordingMode, isRecording) {
+        case (.screen, false): return "録画を開始"
+        case (.screen, true): return "録画を停止"
+        case (.audioOnly, false): return "録音を開始"
+        case (.audioOnly, true): return "録音を停止"
+        }
+    }
+
     var statusText: String {
         switch (recordingMode, isRecording) {
         case (.screen, true): return capturesAudio ? "画面と音声を録画中" : "画面を録画中"
