@@ -33,6 +33,9 @@ pkgbuild \
     --sign "$INSTALLER_IDENTITY" \
     "$PKG"
 
+# Prevent Installer from discovering the signed build as an existing app.
+rm -rf "$STAGING_ROOT" "$APP"
+
 xcrun notarytool submit "$PKG" \
     --keychain-profile "$NOTARY_PROFILE" \
     --wait
