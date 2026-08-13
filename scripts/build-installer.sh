@@ -2,7 +2,8 @@
 set -eu
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
-VERSION=${VERSION:-1.0.1}
+VERSION=${VERSION:-1.0.2}
+BUILD_NUMBER=${BUILD_NUMBER:-3}
 NOTARY_PROFILE=${NOTARY_PROFILE:-Aureline-notary}
 APP_IDENTITY=${APP_IDENTITY:-Developer ID Application: Hideki Konishi (8H7SC722UJ)}
 INSTALLER_IDENTITY=${INSTALLER_IDENTITY:-Developer ID Installer: Hideki Konishi (8H7SC722UJ)}
@@ -13,7 +14,7 @@ STAGING_ROOT="$ROOT/dist/.installer-root"
 APP_PATH="$APP" "$ROOT/scripts/build-app.sh"
 
 /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" "$APP/Contents/Info.plist"
-/usr/libexec/PlistBuddy -c "Set :CFBundleVersion 2" "$APP/Contents/Info.plist"
+/usr/libexec/PlistBuddy -c "Set :CFBundleVersion $BUILD_NUMBER" "$APP/Contents/Info.plist"
 codesign --force --deep --options runtime --timestamp \
     --sign "$APP_IDENTITY" "$APP"
 codesign --verify --deep --strict --verbose=2 "$APP"

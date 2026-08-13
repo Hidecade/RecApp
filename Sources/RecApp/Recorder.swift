@@ -12,6 +12,8 @@ enum RecordingMode: String, CaseIterable, Identifiable {
     var id: Self { self }
     var title: String { self == .screen ? "画面録画" : "音声のみ" }
     var systemImage: String { self == .screen ? "display" : "waveform" }
+    var menuBarSystemImage: String { self == .screen ? "video" : "waveform" }
+    var menuTitle: String { self == .screen ? "画面録画" : "音声録音" }
 }
 
 enum AudioFileFormat: String, CaseIterable, Identifiable {
@@ -46,6 +48,11 @@ final class RecorderViewModel: ObservableObject {
 
     var selectedDisplay: SCDisplay? {
         displays.first { $0.displayID == selectedDisplayID }
+    }
+
+    var menuBarTitle: String {
+        let mode = recordingMode == .screen ? "画面" : "音声"
+        return isRecording ? "\(mode) \(elapsedText)" : mode
     }
 
     var statusText: String {
